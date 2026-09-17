@@ -10,4 +10,6 @@ public interface IExpenseService
     Task<ExpenseDto> CreateAsync(CreateExpenseDto dto);
     Task<bool> UpdateAsync(int id, UpdateExpenseDto dto);
     Task<bool> DeleteAsync(int id);
+
+    Task<IEnumerable<ExpenseDto>> GetFilteredAsync(ExpenseFilterDto filter);
 }

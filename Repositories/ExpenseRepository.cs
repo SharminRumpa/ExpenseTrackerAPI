@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ExpenseTrackerAPI.Data;
+﻿using ExpenseTrackerAPI.Data;
+using ExpenseTrackerAPI.DTOs.Expenses;
 using ExpenseTrackerAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTrackerAPI.Repositories;
 
@@ -55,5 +56,36 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<IEnumerable<Expense>> GetFilteredAsync(ExpenseFilterDto filter)
+    {
+        var query = _context.Expenses
+            .Include(e => e.Category)
+            .AsQueryable();
+
+        if (filter.UserId.HasValue)
+            query = query.Where(e => e.UserId == filter.UserId.Value);
+
+        if (filter.CategoryId.HasValue)
+            query = query.Where(e => e.CategoryId == filter.CategoryId.Value);
+
+        if (filter.FromDate.HasValue)
+            query = query.Where(e => e.ExpenseDate >= filter.FromDate.Value.Date);
+
+        if (filter.ToDate.HasValue)
+            query = query.Where(e => e.ExpenseDate <= filter.ToDate.Value.Date);
+
+        if (!string.IsNullOrWhiteSpace(filter.Search))
+        {
+            var term = filter.Search.Trim().ToLower();
+            query = query.Where(e =>
+                (e.Description != null && e.Description.ToLower().Contains(term)) ||
+                e.Category!.Name.ToLower().Contains(term));
+        }
+
+        return await query
+            .OrderByDescending(e => e.ExpenseDate)
+            .ToListAsync();
     }
 }

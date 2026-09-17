@@ -107,4 +107,13 @@ public class ExpenseService : IExpenseService
             CreatedAt = expense.CreatedAt
         };
     }
+
+    public async Task<IEnumerable<ExpenseDto>> GetFilteredAsync(ExpenseFilterDto filter)
+    {
+        if (filter.FromDate.HasValue && filter.ToDate.HasValue && filter.FromDate > filter.ToDate)
+            throw new ArgumentException("FromDate cannot be later than ToDate.");
+
+        var expenses = await _expenseRepository.GetFilteredAsync(filter);
+        return expenses.Select(MapToDto);
+    }
 }

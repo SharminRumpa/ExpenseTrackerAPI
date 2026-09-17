@@ -1,4 +1,6 @@
-﻿namespace ExpenseTrackerAPI.DTOs.Expenses;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ExpenseTrackerAPI.DTOs.Expenses;
 
 public class ExpenseDto
 {
@@ -14,17 +16,37 @@ public class ExpenseDto
 
 public class CreateExpenseDto
 {
+    [Required]
     public int UserId { get; set; }
+
+    [Required(ErrorMessage = "CategoryId is required.")]
+    [Range(1, int.MaxValue, ErrorMessage = "CategoryId must be a valid positive id.")]
     public int CategoryId { get; set; }
+
+    [Required(ErrorMessage = "Amount is required.")]
+    [Range(0.01, 100000000, ErrorMessage = "Amount must be greater than 0.")]
     public decimal Amount { get; set; }
+
+    [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
     public string? Description { get; set; }
+
+    [Required(ErrorMessage = "ExpenseDate is required.")]
     public DateTime ExpenseDate { get; set; }
 }
 
 public class UpdateExpenseDto
 {
+    [Required(ErrorMessage = "CategoryId is required.")]
+    [Range(1, int.MaxValue, ErrorMessage = "CategoryId must be a valid positive id.")]
     public int CategoryId { get; set; }
+
+    [Required(ErrorMessage = "Amount is required.")]
+    [Range(0.01, 100000000, ErrorMessage = "Amount must be greater than 0.")]
     public decimal Amount { get; set; }
+
+    [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
     public string? Description { get; set; }
+
+    [Required(ErrorMessage = "ExpenseDate is required.")]
     public DateTime ExpenseDate { get; set; }
 }

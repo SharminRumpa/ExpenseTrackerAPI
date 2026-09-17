@@ -15,14 +15,22 @@ public class ExpensesController : ControllerBase
         _service = service;
     }
 
-    // GET: api/expenses
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<ExpenseDto>>> GetAll([FromQuery] int? userId)
-    {
-        var expenses = userId.HasValue
-            ? await _service.GetByUserIdAsync(userId.Value)
-            : await _service.GetAllAsync();
+    //// GET: api/expenses
+    //[HttpGet]
+    //public async Task<ActionResult<IEnumerable<ExpenseDto>>> GetAll([FromQuery] int? userId)
+    //{
+    //    var expenses = userId.HasValue
+    //        ? await _service.GetByUserIdAsync(userId.Value)
+    //        : await _service.GetAllAsync();
 
+    //    return Ok(expenses);
+    //}
+
+    // GET: api/expenses?userId=1&categoryId=2&fromDate=2026-09-01&toDate=2026-09-30&search=food
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ExpenseDto>>> GetAll([FromQuery] ExpenseFilterDto filter)
+    {
+        var expenses = await _service.GetFilteredAsync(filter);
         return Ok(expenses);
     }
 

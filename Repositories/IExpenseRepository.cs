@@ -1,4 +1,5 @@
-﻿using ExpenseTrackerAPI.Models;
+﻿using ExpenseTrackerAPI.DTOs.Expenses;
+using ExpenseTrackerAPI.Models;
 
 namespace ExpenseTrackerAPI.Repositories;
 
@@ -11,4 +12,5 @@ public interface IExpenseRepository
     void Update(Expense expense);
     void Delete(Expense expense);
     Task<bool> SaveChangesAsync();
+    Task<IEnumerable<Expense>> GetFilteredAsync(ExpenseFilterDto filter);
 }
